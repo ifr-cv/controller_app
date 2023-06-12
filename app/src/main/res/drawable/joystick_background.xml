@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- joystick_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#CCCCCC" /> <!-- 设置填充颜色 -->
+    <stroke
+        android:width="2dp"
+        android:color="#333333" /> <!-- 设置边框颜色和宽度 -->
+    <size
+        android:width="100dp"
+        android:height="100dp" /> <!-- 设置图标的宽度和高度 -->
+</shape>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 外圆环，金属效果 -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:endColor="#5A5A5A"
+                android:gradientRadius="50%"
+                android:startColor="#AFAFAF"
+                android:type="radial"
+                android:useLevel="false" />
+        </shape>
+    </item>
+    <!-- 内圆，用于显示指示灯颜色 -->
+    <item
+        android:bottom="5dp"
+        android:left="5dp"
+        android:right="5dp"
+        android:top="5dp">
+        <shape android:shape="oval">
+            <solid android:color="#00FF00" /> <!-- 红色填充颜色 -->
+        </shape>
+    </item>
+</layer-list>

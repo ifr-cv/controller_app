@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/ControllerFragment">
+
+    <fragment
+        android:id="@+id/ControllerFragment"
+        android:name="bid.yuanlu.ifr_controller.ControllerFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_controller">
+
+        <action
+            android:id="@+id/action_ControllerFragment_to_SettingFragment"
+            app:destination="@id/SettingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SettingFragment"
+        android:name="bid.yuanlu.ifr_controller.SettingFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_setting">
+
+        <action
+            android:id="@+id/action_SettingFragment_to_ControllerFragment"
+            app:destination="@id/ControllerFragment" />
+    </fragment>
+</navigation>

@@ -9,12 +9,16 @@ import bid.yuanlu.ifr_controller.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
+    var webManager: WebManager? = null
 
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        webManager?.shutdown()
+        webManager = WebManager()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -42,5 +46,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        webManager?.shutdown()
     }
 }

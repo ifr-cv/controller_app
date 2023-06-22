@@ -12,7 +12,6 @@ import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentControllerBinding
-import okhttp3.OkHttpClient
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -36,6 +35,7 @@ class ControllerFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -51,29 +51,33 @@ class ControllerFragment : Fragment() {
             }
             true
         }
-
+        (activity as MainActivity).webManager!!.statusCallback = { connected: Boolean, error: Throwable? ->
+            if (binding.settingBtn != null) {
+                if (error != null) {
+                    binding.settingBtn!!.setImageResource(R.drawable.gray_light)
+                } else if (connected) {
+                    binding.settingBtn!!.setImageResource(R.drawable.green_light)
+                } else {
+                    binding.settingBtn!!.setImageResource(R.drawable.red_light)
+                }
+            }
+        }
+        (activity as MainActivity).webManager!!.doStatusCallback()
     }
-
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        binding.buttonSecond.setOnClickListener {
-//            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-//        }
-//    }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        (activity as MainActivity).webManager!!.statusCallback = null
     }
 
+    private fun controlCallback(type: Int, x: Int, y: Int) {
+        (activity as MainActivity).webManager!!.setValue(type, x, y)
+    }
 
-    private val controlValues: HashMap<Int, Pair<Any, Any>> = HashMap();
-    val client = OkHttpClient()
-
-    private fun <Tx : Any, Ty : Any> controlCallback(type: Int, x: Tx, y: Ty) {
-        controlValues[type] = Pair<Any, Any>(x, y)
+    private fun controlCallback(type: Int, x: Float, y: Float) {
+        (activity as MainActivity).webManager!!.setValue(type, x, y)
     }
 
     /**
@@ -88,7 +92,7 @@ class ControllerFragment : Fragment() {
         var panOriginalY = 0f
         var coreOriginalX = 0f
         var coreOriginalY = 0f
-        var is_release = true
+        var isRelease = true
 
         var panDownX = 0f
         var panDownY = 0f
@@ -112,18 +116,18 @@ class ControllerFragment : Fragment() {
             val y = event.y + container.y
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    if (!is_release) return@setOnTouchListener true
+                    if (!isRelease) return@setOnTouchListener true
                     panOriginalX = joystick.x
                     panOriginalY = joystick.y
                     coreOriginalX = core.x
                     coreOriginalY = core.y
 
-                    panDownX = if (x - joystick.width / 2 < container.x) container.x;
-                    else if (x + joystick.width / 2 > container.x + container.width) container.x + container.width - joystick.width;
+                    panDownX = if (x - joystick.width / 2 < container.x) container.x
+                    else if (x + joystick.width / 2 > container.x + container.width) container.x + container.width - joystick.width
                     else x - joystick.width / 2
 
-                    panDownY = if (y - joystick.height / 2 < container.y) container.y;
-                    else if (y + joystick.height / 2 > container.y + container.height) container.y + container.height - joystick.height;
+                    panDownY = if (y - joystick.height / 2 < container.y) container.y
+                    else if (y + joystick.height / 2 > container.y + container.height) container.y + container.height - joystick.height
                     else y - joystick.height / 2
 
                     joystick.x = panDownX
@@ -134,22 +138,22 @@ class ControllerFragment : Fragment() {
 
                     setCore(r, x, y)
 
-                    is_release = false
+                    isRelease = false
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if (is_release) return@setOnTouchListener true
+                    if (isRelease) return@setOnTouchListener true
                     setCore(r, x, y)
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    if (is_release) return@setOnTouchListener true
+                    if (isRelease) return@setOnTouchListener true
                     joystick.x = panOriginalX
                     joystick.y = panOriginalY
                     core.x = coreOriginalX
                     core.y = coreOriginalY
                     controlCallback(type, 0f, 0f)
-                    is_release = true
+                    isRelease = true
                 }
             }
             true
@@ -163,7 +167,7 @@ class ControllerFragment : Fragment() {
     private fun addSeek(type: Int, seek: SeekBar) {
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                controlCallback(type, progress, 0);
+                controlCallback(type, progress, 0)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {

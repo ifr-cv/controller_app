@@ -139,11 +139,13 @@ class ControllerFragment : Fragment() {
                     setCore(r, x, y)
 
                     isRelease = false
+                    (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
                 }
 
                 MotionEvent.ACTION_MOVE -> {
                     if (isRelease) return@setOnTouchListener true
                     setCore(r, x, y)
+                    (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
                 }
 
                 MotionEvent.ACTION_UP -> {
@@ -168,14 +170,15 @@ class ControllerFragment : Fragment() {
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 controlCallback(type, progress, 0)
+                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(200)
+                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(200)
+                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
             }
         })
     }

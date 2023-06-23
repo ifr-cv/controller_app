@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:max="2"
             android:progress="1"
-            android:rotation="-45"
+            android:rotation="135"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintLeft_toLeftOf="parent"

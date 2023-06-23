@@ -42,8 +42,8 @@ class ControllerFragment : Fragment() {
         if (binding.leftContainer != null) addJoystick(0, binding.leftContainer!!, binding.joystickPan1!!, binding.joystickCore1!!)
         if (binding.rightContainer != null) addJoystick(1, binding.rightContainer!!, binding.joystickPan2!!, binding.joystickCore2!!)
 
-        if (binding.seek1 != null) addSeek(2, binding.seek1!!)
-        if (binding.seek2 != null) addSeek(3, binding.seek2!!)
+        if (binding.seek1 != null) addSeek(4, binding.seek1!!)
+        if (binding.seek2 != null) addSeek(5, binding.seek2!!)
 
         if (binding.settingBtn != null) binding.settingBtn!!.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -72,12 +72,14 @@ class ControllerFragment : Fragment() {
         (activity as MainActivity).webManager!!.statusCallback = null
     }
 
-    private fun controlCallback(type: Int, x: Int, y: Int) {
-        (activity as MainActivity).webManager!!.setValue(type, x, y)
+    private fun controlCallback(type: Int, x: Int) {
+        (activity as MainActivity).webManager!!.dataPack.setSW(type, x)
     }
 
     private fun controlCallback(type: Int, x: Float, y: Float) {
-        (activity as MainActivity).webManager!!.setValue(type, x, y)
+        val wm = (activity as MainActivity).webManager!!
+        wm.dataPack.setCH(type * 2, x)
+        wm.dataPack.setCH(type * 2 + 1, y)
     }
 
     /**
@@ -88,14 +90,14 @@ class ControllerFragment : Fragment() {
      */
     @SuppressLint("ClickableViewAccessibility")
     private fun addJoystick(type: Int, container: View, joystick: View, core: View) {
-        var panOriginalX = 0f
-        var panOriginalY = 0f
-        var coreOriginalX = 0f
-        var coreOriginalY = 0f
-        var isRelease = true
+        var panOriginalX = 0f//大盘原始位置
+        var panOriginalY = 0f//大盘原始位置
+        var coreOriginalX = 0f//摇杆原始位置
+        var coreOriginalY = 0f//摇杆原始位置
+        var isRelease = true//是否释放
 
-        var panDownX = 0f
-        var panDownY = 0f
+        var panDownX = 0f//大盘按下时中心位置
+        var panDownY = 0f//大盘按下时中心位置
 
         val setCore = fun(r: Float, x: Float, y: Float) {
             var dx = x - panDownX
@@ -107,7 +109,7 @@ class ControllerFragment : Fragment() {
             }
             core.x = panDownX + dx - core.width / 2
             core.y = panDownY + dy - core.width / 2
-            controlCallback(type, dx, dy)
+            controlCallback(type, dx / r, dy / r)
         }
         container.setOnTouchListener { _, event ->
             val r = joystick.width - core.width / 2f
@@ -161,6 +163,7 @@ class ControllerFragment : Fragment() {
             true
         }
 
+        controlCallback(type, 0f, 0f)
     }
 
     /**
@@ -169,7 +172,7 @@ class ControllerFragment : Fragment() {
     private fun addSeek(type: Int, seek: SeekBar) {
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                controlCallback(type, progress, 0)
+                controlCallback(type, progress + 1)
                 (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
             }
 
@@ -181,5 +184,6 @@ class ControllerFragment : Fragment() {
                 (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
             }
         })
+        seek.setProgress(0, false)
     }
 }

@@ -52,7 +52,7 @@ class ControllerFragment : Fragment() {
             }
             true
         }
-        (activity as MainActivity).webManager!!.statusCallback = { connected: Boolean, error: Throwable? ->
+        (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
             if (binding.settingBtn != null) {
                 if (error != null) {
                     binding.settingBtn!!.setImageResource(R.drawable.gray_light)
@@ -70,7 +70,7 @@ class ControllerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        (activity as MainActivity).webManager!!.statusCallback = null
+        (activity as MainActivity).webManager!!.setStatusCallback(null)
     }
 
     private fun controlCallback(type: Int, x: Int) {

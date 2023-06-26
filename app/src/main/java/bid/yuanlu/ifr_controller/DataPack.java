@@ -1,7 +1,6 @@
 package bid.yuanlu.ifr_controller;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -72,12 +71,17 @@ public class DataPack {
     }
 
     String getDataString() {
-        String[] bs = new String[bytes.length];
         synchronized (bytes) {
-            for (int i = 0; i < bytes.length; i++) bs[i] = toBinaryStr(bytes[i]);
-            Log.d("ifr_cs", Arrays.toString(bs));
             return new String(bytes, StandardCharsets.UTF_8);
         }
+    }
+
+    byte[] getData(byte[] bs) {
+        if (bs == null || bs.length != bytes.length) bs = new byte[bytes.length];
+        synchronized (bytes) {
+            System.arraycopy(bytes, 0, bs, 0, bytes.length);
+        }
+        return bs;
     }
 
     @SuppressLint("DefaultLocale")

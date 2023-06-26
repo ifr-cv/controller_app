@@ -17,9 +17,6 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class ControllerFragment : Fragment() {
 
     private var _binding: FragmentControllerBinding? = null

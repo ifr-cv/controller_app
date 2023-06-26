@@ -15,9 +15,6 @@ import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentSettingBinding
 
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class SettingFragment : Fragment() {
 
     private var _binding: FragmentSettingBinding? = null

@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentSettingBinding
@@ -24,7 +25,7 @@ class SettingFragment : Fragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var storge: SharedPreferences;
+    private lateinit var storge: SharedPreferences
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -46,9 +47,7 @@ class SettingFragment : Fragment() {
             val url = binding.editUrl.text.toString()
             (activity as MainActivity).webManager!!.setUrl(url)
 
-            val editor = storge.edit()
-            editor.putString("url", url)
-            editor.apply()
+            storge.edit { putString("url", url) }
 
             findNavController().navigate(R.id.action_SettingFragment_to_ControllerFragment)
         }
@@ -63,9 +62,13 @@ class SettingFragment : Fragment() {
                 binding.btnCancel.text = getString(if (hasEdit) R.string.cancel else R.string.back)
             }
         })
+        binding.vibrate.setOnCheckedChangeListener { _, isChecked ->
+            storge.edit { putBoolean("vibrate", isChecked) }
+        }
         val act = activity as MainActivity
         storge = act.getSharedPreferences("settings", Context.MODE_PRIVATE)
         binding.editUrl.setText(storge.getString("url", ""))
+        binding.vibrate.isChecked = storge.getBoolean("vibrate", true)
         binding.btnSave.text = getString(if (act.webManager!!.isConnected) R.string.save_and_reconnect else R.string.save_and_connect)
     }
 

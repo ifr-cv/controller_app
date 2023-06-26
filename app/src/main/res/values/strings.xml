@@ -18,4 +18,5 @@
     <string name="cancel">取消</string>
     <string name="back">返回</string>
     <string name="copyright">© 2023 NCUT IFR DreamTeam Yuanlu</string>
+    <string name="enable_vibrate">是否开启震动</string>
 </resources>

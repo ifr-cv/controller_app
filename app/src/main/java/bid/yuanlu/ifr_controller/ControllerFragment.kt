@@ -2,6 +2,7 @@ package bid.yuanlu.ifr_controller
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Vibrator
 import android.view.LayoutInflater
@@ -26,6 +27,8 @@ class ControllerFragment : Fragment() {
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
+    private lateinit var storge: SharedPreferences
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +41,7 @@ class ControllerFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
 
         if (binding.leftContainer != null) addJoystick(0, binding.leftContainer!!, binding.joystickPan1!!, binding.joystickCore1!!)
         if (binding.rightContainer != null) addJoystick(1, binding.rightContainer!!, binding.joystickPan2!!, binding.joystickCore2!!)
@@ -80,6 +84,11 @@ class ControllerFragment : Fragment() {
         val wm = (activity as MainActivity).webManager!!
         wm.dataPack.setCH(type * 2, x)
         wm.dataPack.setCH(type * 2 + 1, y)
+    }
+
+    private fun vibrate(milliseconds: Long) {
+        if (!storge.getBoolean("vibrate", false)) return
+        (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(milliseconds)
     }
 
     /**
@@ -141,13 +150,13 @@ class ControllerFragment : Fragment() {
                     setCore(r, x, y)
 
                     isRelease = false
-                    (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
+                    vibrate(5)
                 }
 
                 MotionEvent.ACTION_MOVE -> {
                     if (isRelease) return@setOnTouchListener true
                     setCore(r, x, y)
-                    (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
+                    vibrate(5)
                 }
 
                 MotionEvent.ACTION_UP -> {
@@ -173,15 +182,15 @@ class ControllerFragment : Fragment() {
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 controlCallback(type, progress + 1)
-                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
+                vibrate(10)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
+                vibrate(10)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                (activity!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(10)
+                vibrate(10)
             }
         })
         seek.setProgress(0, false)

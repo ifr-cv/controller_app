@@ -14,7 +14,7 @@ public class DataPack {
     /**
      * 每个数据域的bit数
      */
-    private static final int[] BITS = new int[]{11, 11, 11, 11, 1, 1, 1, 1, 1};
+    private static final int[] BITS = new int[]{2, 1, 1, 1, 3, 11, 11, 11, 11,};
     /**
      * 每个数据域的偏移bit数
      */
@@ -92,6 +92,15 @@ public class DataPack {
     public void setBTN(int id, boolean x) {
         synchronized (bytes) {
             fieldInfos[id].set(x ? 1 : 0);
+        }
+    }
+
+    /**
+     * 设置一个原始值
+     */
+    public void setRAW(int id, int select) {
+        synchronized (bytes) {
+            fieldInfos[id].set(select);
         }
     }
 

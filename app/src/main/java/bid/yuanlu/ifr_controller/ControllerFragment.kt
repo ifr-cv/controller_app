@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
@@ -27,6 +30,7 @@ class ControllerFragment : Fragment() {
 
     private lateinit var storge: SharedPreferences
     private lateinit var controllerStatus: SharedPreferences
+    private var handler: Handler = Handler(Looper.getMainLooper())
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -43,17 +47,23 @@ class ControllerFragment : Fragment() {
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
         controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
-        addJoystick(0, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
-        addJoystick(2, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
+        addJoystick(5, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
+        addJoystick(7, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
 
 //        addSeek(4, binding.seek1)
 //        addSeek(5, binding.seek2)
 
-        addBtn(4, binding.btn1)
-        addBtn(5, binding.btn2)
-        addBtn(6, binding.btn3)
-        addBtn(7, binding.btn4)
-        addBtn(8, binding.btn5)
+        addBtnGroup(0, binding.btn1, binding.btn2, binding.btn3)
+        addBtnGroup(1, binding.btn4, binding.btn5)
+        addBtn(2, binding.btn6, 500)
+        addBtn(3, binding.btn7, 500)
+//        addBtn(0, binding.btn1)
+//        addBtn(1, binding.btn2)
+//        addBtn(2, binding.btn3)
+//        addBtn(3, binding.btn4)
+//        addBtn(4, binding.btn5)
+
+        addMap(4, binding.map)
 
         if (binding.settingBtn != null) binding.settingBtn!!.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -62,7 +72,6 @@ class ControllerFragment : Fragment() {
             true
         }
 
-        if (binding.map != null) binding.map!!.rotation = if (storge.getBoolean("is_red_team", true)) -90f else 90f
 
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
             if (binding.settingBtn != null) {
@@ -77,7 +86,6 @@ class ControllerFragment : Fragment() {
         }
         (activity as MainActivity).webManager!!.doStatusCallback()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -212,20 +220,76 @@ class ControllerFragment : Fragment() {
 
     /**
      * 添加按钮
+     * @param bounce 自动弹起时长(ms)小于等于0则不自动弹起
      */
-    private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?) {
+    private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?, bounce: Long = -1) {
         if (btn == null) return
         if (btn.visibility != View.VISIBLE) return
         var isPress = controllerStatus.getBoolean("btn_$type", false)
-        btn.setOnClickListener {
-            isPress = !isPress
+        fun handlerClick(newState: Boolean, vib: Boolean = false) {
+            isPress = newState
             (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
-            controllerStatus.edit { putBoolean("btn_$type", isPress) }
+            controllerStatus.edit { putBoolean("btn_$type", bounce < 0 && isPress) }
             btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
-            vibrate(10, VibrateType.BTN)
+            if (vib) vibrate(10, VibrateType.BTN)
+            if (bounce > 0 && isPress) handler.postDelayed({ handlerClick(false) }, bounce)
         }
-        (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
-        controllerStatus.edit { putBoolean("btn_$type", isPress) }
-        btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
+        btn.setOnClickListener { handlerClick(!isPress, true) }
+        handlerClick(isPress)
     }
+
+    /**
+     * 添加按钮组, 按钮组中只有一个能够启用
+     */
+    private fun addBtnGroup(type: Int, vararg btns: com.google.android.material.button.MaterialButton?) {
+        for (btn in btns) if (btn == null || btn.visibility != View.VISIBLE) return
+        var btn_index = controllerStatus.getInt("btnG_$type", 0)
+        for (index in btns.indices) {
+            val btn = btns[index]!!
+            btn.setOnClickListener {
+                btn_index = index
+                (activity as MainActivity).webManager!!.dataPack.setRAW(type, index)
+                controllerStatus.edit { putInt("btnG_$type", index) }
+                for (i in btns.indices) btns[i]!!.setBackgroundResource(if (btn_index == i) R.drawable.green_btn else R.drawable.gray_btn)
+                vibrate(10, VibrateType.BTN)
+            }
+        }
+        (activity as MainActivity).webManager!!.dataPack.setRAW(type, btn_index)
+        controllerStatus.edit { putInt("btnG_$type", btn_index) }
+        for (i in btns.indices) btns[i]!!.setBackgroundResource(if (btn_index == i) R.drawable.green_btn else R.drawable.gray_btn)
+    }
+
+    /**
+     * 添加地图
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    private fun addMap(type: Int, map: ImageView?) {
+        if (map == null) return
+        val isRed = storge.getBoolean("is_red_team", true)
+        map.rotation = if (isRed) -90f else 90f
+        var big = false
+        val mc = MapClicker.getRobocon2023()
+        var select = 0
+        map.setImageResource(if (big) R.drawable.robocon_2023_place_center else R.drawable.robocon_2023_place)
+        map.setOnTouchListener { _, event ->
+            if (event.actionMasked != MotionEvent.ACTION_UP) return@setOnTouchListener true
+            if (big) {
+                var x = event.x.toDouble() / map.width
+                var y = event.y.toDouble() / map.height
+                if (isRed) {
+                    val t = x;x = y;y = 1 - t
+                } else {
+                    val t = x;x = 1 - y;y = t
+                }
+                select = mc.getClosest(x, y)
+                (activity as MainActivity).webManager!!.dataPack.setRAW(type, select)
+            }
+            big = !big
+            map.setImageResource(if (big) R.drawable.robocon_2023_place_center else R.drawable.robocon_2023_place)
+
+            true
+        }
+    }
+
+
 }

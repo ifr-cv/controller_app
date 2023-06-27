@@ -14,7 +14,7 @@ public class DataPack {
     /**
      * 每个数据域的bit数
      */
-    private static final int[] BITS = new int[]{11, 11, 11, 11, 2, 2};
+    private static final int[] BITS = new int[]{11, 11, 11, 11, 1, 1, 1, 1, 1};
     /**
      * 每个数据域的偏移bit数
      */
@@ -59,6 +59,19 @@ public class DataPack {
     }
 
     /**
+     * 设置两个个通道数据
+     *
+     * @param id 通道ID (id及id+1)
+     * @param x  通道值[-1 ~ 1]
+     */
+    public void setCH(int id, float x, float y) {
+        synchronized (bytes) {
+            fieldInfos[id].set((int) (x * 660 + 1024));
+            fieldInfos[id + 1].set((int) (x * 660 + 1024));
+        }
+    }
+
+    /**
      * 设置一个拨杆数据
      *
      * @param id 拨杆ID
@@ -67,6 +80,18 @@ public class DataPack {
     public void setSW(int id, int x) {
         synchronized (bytes) {
             fieldInfos[id].set(x);
+        }
+    }
+
+    /**
+     * 设置一个按钮数据
+     *
+     * @param id 拨杆ID
+     * @param x  拨杆值[1, 2, 3]
+     */
+    public void setBTN(int id, boolean x) {
+        synchronized (bytes) {
+            fieldInfos[id].set(x ? 1 : 0);
         }
     }
 

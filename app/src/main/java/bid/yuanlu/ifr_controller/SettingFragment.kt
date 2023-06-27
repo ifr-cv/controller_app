@@ -59,13 +59,21 @@ class SettingFragment : Fragment() {
                 binding.btnCancel.text = getString(if (hasEdit) R.string.cancel else R.string.back)
             }
         })
-        binding.vibrate.setOnCheckedChangeListener { _, isChecked ->
-            storge.edit { putBoolean("vibrate", isChecked) }
+        binding.vibrateBtn.setOnCheckedChangeListener { _, isChecked ->
+            storge.edit { putBoolean("vibrateBtn", isChecked) }
+        }
+        binding.vibrateJoystick.setOnCheckedChangeListener { _, isChecked ->
+            storge.edit { putBoolean("vibrateJoystick", isChecked) }
+        }
+        binding.vibrateSeek.setOnCheckedChangeListener { _, isChecked ->
+            storge.edit { putBoolean("vibrateSeek", isChecked) }
         }
         val act = activity as MainActivity
         storge = act.getSharedPreferences("settings", Context.MODE_PRIVATE)
         binding.editUrl.setText(storge.getString("url", ""))
-        binding.vibrate.isChecked = storge.getBoolean("vibrate", true)
+        binding.vibrateBtn.isChecked = storge.getBoolean("vibrateBtn", true)
+        binding.vibrateJoystick.isChecked = storge.getBoolean("vibrateJoystick", true)
+        binding.vibrateSeek.isChecked = storge.getBoolean("vibrateSeek", true)
         binding.btnSave.text = getString(if (act.webManager!!.isConnected) R.string.save_and_reconnect else R.string.save_and_connect)
     }
 

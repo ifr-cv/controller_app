@@ -40,11 +40,17 @@ class ControllerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-        if (binding.leftContainer != null) addJoystick(0, binding.leftContainer!!, binding.joystickPan1!!, binding.joystickCore1!!)
-        if (binding.rightContainer != null) addJoystick(1, binding.rightContainer!!, binding.joystickPan2!!, binding.joystickCore2!!)
+        addJoystick(0, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
+        addJoystick(2, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
 
-        if (binding.seek1 != null) addSeek(4, binding.seek1!!)
-        if (binding.seek2 != null) addSeek(5, binding.seek2!!)
+//        addSeek(4, binding.seek1)
+//        addSeek(5, binding.seek2)
+
+        addBtn(4, binding.btn1)
+        addBtn(5, binding.btn2)
+        addBtn(6, binding.btn3)
+        addBtn(7, binding.btn4)
+        addBtn(8, binding.btn5)
 
         if (binding.settingBtn != null) binding.settingBtn!!.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -73,19 +79,16 @@ class ControllerFragment : Fragment() {
         (activity as MainActivity).webManager!!.setStatusCallback(null)
     }
 
-    private fun controlCallback(type: Int, x: Int) {
-        (activity as MainActivity).webManager!!.dataPack.setSW(type, x)
-    }
 
-    private fun controlCallback(type: Int, x: Float, y: Float) {
-        val wm = (activity as MainActivity).webManager!!
-        wm.dataPack.setCH(type * 2, x)
-        wm.dataPack.setCH(type * 2 + 1, y)
-    }
-
-    private fun vibrate(milliseconds: Long) {
-        if (!storge.getBoolean("vibrate", false)) return
+    private fun vibrate(milliseconds: Long, vt: VibrateType) {
+        if (!storge.getBoolean(vt.field, false)) return
         (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator).vibrate(milliseconds)
+    }
+
+    enum class VibrateType(val field: String) {
+        BTN("vibrateBtn"),
+        JOYSTICK("vibrateJoystick"),
+        SEEK("vibrateSeek")
     }
 
     /**
@@ -95,7 +98,9 @@ class ControllerFragment : Fragment() {
      * @param core 摇杆核
      */
     @SuppressLint("ClickableViewAccessibility")
-    private fun addJoystick(type: Int, container: View, joystick: View, core: View) {
+    private fun addJoystick(type: Int, container: View?, joystick: View?, core: View?) {
+        if (container == null || joystick == null || core == null) return
+        if (joystick.visibility != View.VISIBLE) return
         var panOriginalX = 0f//大盘原始位置
         var panOriginalY = 0f//大盘原始位置
         var coreOriginalX = 0f//摇杆原始位置
@@ -115,7 +120,7 @@ class ControllerFragment : Fragment() {
             }
             core.x = panDownX + dx - core.width / 2
             core.y = panDownY + dy - core.width / 2
-            controlCallback(type, dx / r, dy / r)
+            (activity as MainActivity).webManager!!.dataPack.setCH(type, dx / r, dy / r)
         }
         container.setOnTouchListener { _, event ->
             val r = joystick.width - core.width / 2f
@@ -147,13 +152,13 @@ class ControllerFragment : Fragment() {
                     setCore(r, x, y)
 
                     isRelease = false
-                    vibrate(5)
+                    vibrate(5, VibrateType.JOYSTICK)
                 }
 
                 MotionEvent.ACTION_MOVE -> {
                     if (isRelease) return@setOnTouchListener true
                     setCore(r, x, y)
-                    vibrate(5)
+                    vibrate(5, VibrateType.JOYSTICK)
                 }
 
                 MotionEvent.ACTION_UP -> {
@@ -162,34 +167,54 @@ class ControllerFragment : Fragment() {
                     joystick.y = panOriginalY
                     core.x = coreOriginalX
                     core.y = coreOriginalY
-                    controlCallback(type, 0f, 0f)
+                    (activity as MainActivity).webManager!!.dataPack.setCH(type, 0f, 0f)
                     isRelease = true
                 }
             }
             true
         }
 
-        controlCallback(type, 0f, 0f)
+        (activity as MainActivity).webManager!!.dataPack.setCH(type, 0f, 0f)
     }
 
     /**
      * 添加拨杆
      */
-    private fun addSeek(type: Int, seek: SeekBar) {
+    private fun addSeek(type: Int, seek: SeekBar?) {
+        if (seek == null) return
+        if (seek.visibility != View.VISIBLE) return
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                controlCallback(type, progress + 1)
-                vibrate(10)
+                (activity as MainActivity).webManager!!.dataPack.setSW(type, progress + 1)
+                vibrate(10, VibrateType.SEEK)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                vibrate(10)
+                vibrate(10, VibrateType.SEEK)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                vibrate(10)
+                vibrate(10, VibrateType.SEEK)
             }
         })
         seek.setProgress(0, false)
+        (activity as MainActivity).webManager!!.dataPack.setSW(type, 0 + 1)
+    }
+
+    /**
+     * 添加按钮
+     */
+    private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?) {
+        if (btn == null) return
+        if (btn.visibility != View.VISIBLE) return
+        var isPress = false
+        btn.setOnClickListener {
+            isPress = !isPress
+            (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
+            btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
+            vibrate(10, VibrateType.BTN)
+        }
+        (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
+        btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
     }
 }

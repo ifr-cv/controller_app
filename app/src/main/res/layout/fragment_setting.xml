@@ -22,11 +22,25 @@
         android:inputType="textUri" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrate"
+        android:id="@+id/vibrate_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="true"
-        android:text="@string/enable_vibrate" />
+        android:text="@string/enable_vibrate_btn" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/vibrate_joystick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/enable_vibrate_joystick" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/vibrate_seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/enable_vibrate_seek" />
 
     <LinearLayout
         android:layout_width="match_parent"

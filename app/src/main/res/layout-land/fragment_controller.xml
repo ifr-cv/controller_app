@@ -28,6 +28,7 @@
             android:max="2"
             android:progress="1"
             android:rotation="45"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -42,6 +43,72 @@
             android:max="2"
             android:progress="1"
             android:rotation="135"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn1"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_btn"
+            app:backgroundTint="#00FFFFFF"
+            app:backgroundTintMode="screen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_btn"
+            app:backgroundTint="#00FFFFFF"
+            app:backgroundTintMode="screen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.13"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn3"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/gray_btn"
+            app:backgroundTint="#00FFFFFF"
+            app:backgroundTintMode="screen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.21"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn4"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_btn"
+            app:backgroundTint="#00FFFFFF"
+            app:backgroundTintMode="screen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.87"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn5"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/green_btn"
+            app:backgroundTint="#00FFFFFF"
+            app:backgroundTintMode="screen"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintLeft_toLeftOf="parent"

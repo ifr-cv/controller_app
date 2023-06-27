@@ -132,8 +132,12 @@ abstract class Connector {
                 try {
                     val url1 = URL(if (url.contains("://")) url else "http://$url")
                     thread = Thread {
-                        socket = Socket(url1.host, if (url1.port == -1) url1.defaultPort else url1.port)
-                        os = socket?.getOutputStream()
+                        try {
+                            socket = Socket(url1.host, if (url1.port == -1) url1.defaultPort else url1.port)
+                            os = socket?.getOutputStream()
+                        } catch (e: Throwable) {
+                            error = e
+                        }
                         updateStatus(socket?.isConnected ?: false)
                     }
                     thread?.start()

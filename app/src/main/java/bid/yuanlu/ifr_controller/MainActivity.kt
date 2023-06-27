@@ -1,9 +1,11 @@
 package bid.yuanlu.ifr_controller
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.WindowCompat
 import bid.yuanlu.ifr_controller.databinding.ActivityMainBinding
 
@@ -16,6 +18,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        val storage = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        storage.edit {
+            putString("url", storage.getString("url", ""))
+            putBoolean("vibrateBtn", storage.getBoolean("vibrateBtn", true))
+            putBoolean("vibrateJoystick", storage.getBoolean("vibrateJoystick", true))
+            putBoolean("vibrateSeek", storage.getBoolean("vibrateSeek", true))
+        }
 
         webManager?.shutdown()
         webManager = WebManager()

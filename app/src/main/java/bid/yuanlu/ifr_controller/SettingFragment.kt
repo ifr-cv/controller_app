@@ -68,13 +68,27 @@ class SettingFragment : Fragment() {
         binding.vibrateSeek.setOnCheckedChangeListener { _, isChecked ->
             storge.edit { putBoolean("vibrateSeek", isChecked) }
         }
+        binding.switchTeam.setOnClickListener {
+            val is_red = !storge.getBoolean("is_red_team", false)
+            storge.edit { putBoolean("is_red_team", is_red) }
+            binding.switchTeam.setBackgroundColor(resources.getColor(if (is_red) R.color.team_red else R.color.team_blue, activity?.theme))
+            binding.switchTeam.text = getString(if (is_red) R.string.self_team_red else R.string.self_team_blue)
+        }
         val act = activity as MainActivity
         storge = act.getSharedPreferences("settings", Context.MODE_PRIVATE)
         binding.editUrl.setText(storge.getString("url", ""))
         binding.vibrateBtn.isChecked = storge.getBoolean("vibrateBtn", true)
         binding.vibrateJoystick.isChecked = storge.getBoolean("vibrateJoystick", true)
         binding.vibrateSeek.isChecked = storge.getBoolean("vibrateSeek", true)
+        binding.switchTeam.setBackgroundColor(
+            resources.getColor(
+                if (storge.getBoolean("is_red_team", true)) R.color.team_red else R.color.team_blue,
+                activity?.theme
+            )
+        )
+        binding.switchTeam.text = getString(if (storge.getBoolean("is_red_team", true)) R.string.self_team_red else R.string.self_team_blue)
         binding.btnSave.text = getString(if (act.webManager!!.isConnected) R.string.save_and_reconnect else R.string.save_and_connect)
+
     }
 
     override fun onDestroyView() {

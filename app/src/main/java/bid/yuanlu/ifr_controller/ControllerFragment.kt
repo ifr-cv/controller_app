@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentControllerBinding
@@ -25,6 +26,7 @@ class ControllerFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var storge: SharedPreferences
+    private lateinit var controllerStatus: SharedPreferences
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -39,6 +41,7 @@ class ControllerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
+        controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
         addJoystick(0, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
         addJoystick(2, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
@@ -58,6 +61,9 @@ class ControllerFragment : Fragment() {
             }
             true
         }
+
+        if (binding.map != null) binding.map!!.rotation = if (storge.getBoolean("is_red_team", true)) -90f else 90f
+
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
             if (binding.settingBtn != null) {
                 if (error != null) {
@@ -186,6 +192,7 @@ class ControllerFragment : Fragment() {
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 (activity as MainActivity).webManager!!.dataPack.setSW(type, progress + 1)
+                controllerStatus.edit { putInt("seek_$type", progress) }
                 vibrate(10, VibrateType.SEEK)
             }
 
@@ -197,8 +204,10 @@ class ControllerFragment : Fragment() {
                 vibrate(10, VibrateType.SEEK)
             }
         })
-        seek.setProgress(0, false)
-        (activity as MainActivity).webManager!!.dataPack.setSW(type, 0 + 1)
+        val progress = controllerStatus.getInt("seek_$type", 0)
+        controllerStatus.edit { putInt("seek_$type", progress) }
+        seek.setProgress(progress, false)
+        (activity as MainActivity).webManager!!.dataPack.setSW(type, progress + 1)
     }
 
     /**
@@ -207,14 +216,16 @@ class ControllerFragment : Fragment() {
     private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?) {
         if (btn == null) return
         if (btn.visibility != View.VISIBLE) return
-        var isPress = false
+        var isPress = controllerStatus.getBoolean("btn_$type", false)
         btn.setOnClickListener {
             isPress = !isPress
             (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
+            controllerStatus.edit { putBoolean("btn_$type", isPress) }
             btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
             vibrate(10, VibrateType.BTN)
         }
         (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
+        controllerStatus.edit { putBoolean("btn_$type", isPress) }
         btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
     }
 }

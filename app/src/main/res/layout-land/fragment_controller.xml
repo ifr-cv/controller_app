@@ -224,5 +224,17 @@
         app:layout_constraintRight_toRightOf="@id/joystick_pan_2"
         app:layout_constraintTop_toTopOf="@id/joystick_pan_2" />
 
+    <ImageView
+        android:id="@+id/map"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:rotation="90"
+        android:src="@drawable/robocon_place"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

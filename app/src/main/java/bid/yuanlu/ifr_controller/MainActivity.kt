@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             putBoolean("vibrateBtn", storage.getBoolean("vibrateBtn", true))
             putBoolean("vibrateJoystick", storage.getBoolean("vibrateJoystick", true))
             putBoolean("vibrateSeek", storage.getBoolean("vibrateSeek", true))
+            putBoolean("is_red_team", storage.getBoolean("is_red_team", true))
         }
 
         webManager?.shutdown()

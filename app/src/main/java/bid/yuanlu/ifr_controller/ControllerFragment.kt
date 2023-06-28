@@ -53,10 +53,8 @@ class ControllerFragment : Fragment() {
         binding.btn4.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
             if (isPress) {
                 binding.btn6.visibility = View.VISIBLE
-                binding.btn6.text = getString(R.string.ctrl_btn_zhuaqu_zhua)
-                binding.btn7.text = getString(R.string.ctrl_btn_zhuaqu_sheng)
-                (binding.btn6.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = -1
-                (binding.btn7.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = -1
+                binding.btn7.visibility = View.VISIBLE
+                binding.btn8.visibility = View.INVISIBLE
                 (binding.btn6.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
                 (binding.btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
             }
@@ -64,13 +62,15 @@ class ControllerFragment : Fragment() {
         binding.btn5.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
             if (isPress) {
                 binding.btn6.visibility = View.INVISIBLE
-                binding.btn7.text = getString(R.string.ctrl_btn_touzhi_tou)
-                (binding.btn7.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = 500
-                (binding.btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+                binding.btn7.visibility = View.INVISIBLE
+                binding.btn8.visibility = View.VISIBLE
+                (binding.btn8.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+
             }
         }))
-        binding.btn6.setTag(R.id.btn_extra_data, BtnExtraData())
-        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData())
+        binding.btn6.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
+        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
+        binding.btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disable_bg = R.drawable.red_btn))
 
         addJoystick(5, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
         addJoystick(8, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
@@ -82,6 +82,7 @@ class ControllerFragment : Fragment() {
         addBtnGroup(1, binding.btn4, binding.btn5)
         addBtn(2, binding.btn6)
         addBtn(3, binding.btn7)
+        addBtn(3, binding.btn8)
 //        addBtn(0, binding.btn1)
 //        addBtn(1, binding.btn2)
 //        addBtn(2, binding.btn3)
@@ -97,6 +98,12 @@ class ControllerFragment : Fragment() {
             true
         }
 
+        handler.post {
+            val x = ((binding.btn6.x + binding.btn6.width / 2) + (binding.btn7.x + binding.btn7.width / 2)) / 2
+            val y = ((binding.btn6.y + binding.btn6.height / 2) + (binding.btn7.y + binding.btn7.height / 2)) / 2
+            binding.btn8.x = x - binding.btn8.width / 2
+            binding.btn8.y = y - binding.btn8.height / 2
+        }
 
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
             if (error != null) {
@@ -137,7 +144,6 @@ class ControllerFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun addJoystick(type: Int, container: View?, joystick: View?, core: View?) {
         if (container == null || joystick == null || core == null) return
-        if (joystick.visibility != View.VISIBLE) return
         var panOriginalX = 0f//大盘原始位置
         var panOriginalY = 0f//大盘原始位置
         var coreOriginalX = 0f//摇杆原始位置
@@ -219,7 +225,6 @@ class ControllerFragment : Fragment() {
      */
     private fun addSeek(type: Int, seek: SeekBar?) {
         if (seek == null) return
-        if (seek.visibility != View.VISIBLE) return
         seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 (activity as MainActivity).webManager!!.dataPack.setSW(type, progress + 1)
@@ -246,7 +251,6 @@ class ControllerFragment : Fragment() {
      */
     private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?) {
         if (btn == null) return
-        if (btn.visibility != View.VISIBLE) return
         val bed = btn.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData()
         btn.setTag(R.id.btn_extra_data, bed)
         var isPress = controllerStatus.getBoolean("btn_$type", false)
@@ -273,7 +277,7 @@ class ControllerFragment : Fragment() {
      * 添加按钮组, 按钮组中只有一个能够启用
      */
     private fun addBtnGroup(type: Int, vararg btns: com.google.android.material.button.MaterialButton?) {
-        for (btn in btns) if (btn == null || btn.visibility != View.VISIBLE) return
+        for (btn in btns) if (btn == null) return
         var btnIndex = -1
         val beds = Array(btns.size) { btns[it]!!.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData() }
         for (i in btns.indices) btns[i]!!.setTag(R.id.btn_extra_data, beds[i])

@@ -22,7 +22,6 @@ import kotlin.math.sqrt
 
 
 class ControllerFragment : Fragment() {
-
     private var _binding: FragmentControllerBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
@@ -47,6 +46,32 @@ class ControllerFragment : Fragment() {
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
         controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
+
+        binding.btn1.setTag(R.id.btn_extra_data, BtnExtraData(enable_color = R.color.red))
+        binding.btn2.setTag(R.id.btn_extra_data, BtnExtraData())
+        binding.btn3.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500))
+        binding.btn4.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
+            if (isPress) {
+                binding.btn6.visibility = View.VISIBLE
+                binding.btn6.text = getString(R.string.ctrl_btn_zhuaqu_zhua)
+                binding.btn7.text = getString(R.string.ctrl_btn_zhuaqu_sheng)
+                (binding.btn6.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = -1
+                (binding.btn7.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = -1
+                (binding.btn6.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+                (binding.btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+            }
+        }))
+        binding.btn5.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
+            if (isPress) {
+                binding.btn6.visibility = View.INVISIBLE
+                binding.btn7.text = getString(R.string.ctrl_btn_touzhi_tou)
+                (binding.btn7.getTag(R.id.btn_extra_data) as? BtnExtraData)?.bounce = 500
+                (binding.btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+            }
+        }))
+        binding.btn6.setTag(R.id.btn_extra_data, BtnExtraData())
+        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData())
+
         addJoystick(5, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
         addJoystick(8, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
 
@@ -55,8 +80,8 @@ class ControllerFragment : Fragment() {
 
         addBtnGroup(0, binding.btn1, binding.btn2, binding.btn3)
         addBtnGroup(1, binding.btn4, binding.btn5)
-        addBtn(2, binding.btn6, -1)
-        addBtn(3, binding.btn7, 500)
+        addBtn(2, binding.btn6)
+        addBtn(3, binding.btn7)
 //        addBtn(0, binding.btn1)
 //        addBtn(1, binding.btn2)
 //        addBtn(2, binding.btn3)
@@ -65,7 +90,7 @@ class ControllerFragment : Fragment() {
 
         addMap(4, binding.map)
 
-        if (binding.settingBtn != null) binding.settingBtn!!.setOnTouchListener { _, event ->
+        binding.settingBtn.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_UP) {
                 findNavController().navigate(R.id.action_ControllerFragment_to_SettingFragment)
             }
@@ -74,14 +99,12 @@ class ControllerFragment : Fragment() {
 
 
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
-            if (binding.settingBtn != null) {
-                if (error != null) {
-                    binding.settingBtn!!.setImageResource(R.drawable.gray_light)
-                } else if (connected) {
-                    binding.settingBtn!!.setImageResource(R.drawable.green_light)
-                } else {
-                    binding.settingBtn!!.setImageResource(R.drawable.red_light)
-                }
+            if (error != null) {
+                binding.settingBtn.setImageResource(R.drawable.gray_light)
+            } else if (connected) {
+                binding.settingBtn.setImageResource(R.drawable.green_light)
+            } else {
+                binding.settingBtn.setImageResource(R.drawable.red_light)
             }
         }
         (activity as MainActivity).webManager!!.doStatusCallback()
@@ -220,21 +243,29 @@ class ControllerFragment : Fragment() {
 
     /**
      * 添加按钮
-     * @param bounce 自动弹起时长(ms)小于等于0则不自动弹起
      */
-    private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?, bounce: Long = -1) {
+    private fun addBtn(type: Int, btn: com.google.android.material.button.MaterialButton?) {
         if (btn == null) return
         if (btn.visibility != View.VISIBLE) return
+        val bed = btn.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData()
+        btn.setTag(R.id.btn_extra_data, bed)
         var isPress = controllerStatus.getBoolean("btn_$type", false)
         fun handlerClick(newState: Boolean, vib: Boolean = false) {
+            (activity as MainActivity).webManager!!.dataPack.setBTN(type, newState)
+            controllerStatus.edit { putBoolean("btn_$type", bed.bounce < 0 && newState) }
+            btn.setBackgroundResource(if (newState) bed.enableBg else bed.disableBg)
+            btn.setTextColor(resources.getColor(if (newState) bed.enableColor else bed.disableColor, activity?.theme))
+            bed.update(newState, isPress)
             isPress = newState
-            (activity as MainActivity).webManager!!.dataPack.setBTN(type, isPress)
-            controllerStatus.edit { putBoolean("btn_$type", bounce < 0 && isPress) }
-            btn.setBackgroundResource(if (isPress) R.drawable.green_btn else R.drawable.gray_btn)
             if (vib) vibrate(10, VibrateType.BTN)
-            if (bounce > 0 && isPress) handler.postDelayed({ handlerClick(false) }, bounce)
+            if (bed.bounce > 0 && newState) handler.postDelayed({ handlerClick(false) }, bed.bounce)
         }
         btn.setOnClickListener { handlerClick(!isPress, true) }
+        btn.setTag(R.id.btn_setter, object : SetterBtn {
+            override fun set(isPressed: Boolean) {
+                handlerClick(isPressed, false)
+            }
+        })
         handlerClick(isPress)
     }
 
@@ -243,20 +274,39 @@ class ControllerFragment : Fragment() {
      */
     private fun addBtnGroup(type: Int, vararg btns: com.google.android.material.button.MaterialButton?) {
         for (btn in btns) if (btn == null || btn.visibility != View.VISIBLE) return
-        var btn_index = controllerStatus.getInt("btnG_$type", 0)
-        for (index in btns.indices) {
-            val btn = btns[index]!!
-            btn.setOnClickListener {
-                btn_index = index
+        var btnIndex = -1
+        val beds = Array(btns.size) { btns[it]!!.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData() }
+        for (i in btns.indices) btns[i]!!.setTag(R.id.btn_extra_data, beds[i])
+
+        fun handlerClick(index: Int, newState: Boolean, oldState: Boolean, vib: Boolean = false) {
+            val bed = beds[index]
+            if (newState && !oldState) {
                 (activity as MainActivity).webManager!!.dataPack.setRAW(type, index)
                 controllerStatus.edit { putInt("btnG_$type", index) }
-                for (i in btns.indices) btns[i]!!.setBackgroundResource(if (btn_index == i) R.drawable.green_btn else R.drawable.gray_btn)
-                vibrate(10, VibrateType.BTN)
+                for (i in btns.indices) if (i != index) handlerClick(i, false, i == btnIndex, false)
+                btnIndex = index
+                if (bed.bounce > 0) {
+                    val to = bed.bounceTo
+                    handler.postDelayed({ handlerClick(to, true, btnIndex == to) }, bed.bounce)
+                }
             }
+            bed.update(newState, oldState)
+            val btn = btns[index]!!
+            btn.setBackgroundResource(if (newState) bed.enableBg else bed.disableBg)
+            btn.setTextColor(resources.getColor(if (newState) bed.enableColor else bed.disableColor, activity?.theme))
+            if (vib) vibrate(10, VibrateType.BTN)
         }
-        (activity as MainActivity).webManager!!.dataPack.setRAW(type, btn_index)
-        controllerStatus.edit { putInt("btnG_$type", btn_index) }
-        for (i in btns.indices) btns[i]!!.setBackgroundResource(if (btn_index == i) R.drawable.green_btn else R.drawable.gray_btn)
+
+        for (index in btns.indices) {
+            val btn = btns[index]!!
+            btn.setOnClickListener { handlerClick(index, true, btnIndex == index, true) }
+            btn.setTag(R.id.btn_setter, object : SetterBGroup {
+                override fun set() {
+                    handlerClick(index, true, btnIndex == index, false)
+                }
+            })
+        }
+        handlerClick(controllerStatus.getInt("btnG_$type", 0), newState = true, oldState = false)
     }
 
     /**
@@ -269,8 +319,8 @@ class ControllerFragment : Fragment() {
         map.rotation = if (isRed) -90f else 90f
         var big = false
         val mc = MapClicker.getRobocon2023()
-        var select = 0
-        map.setImageResource(if (big) R.drawable.robocon_2023_place_center else R.drawable.robocon_2023_place)
+        var select: Int
+        map.setImageResource(R.drawable.robocon_2023_place)
         map.setOnTouchListener { _, event ->
             if (event.actionMasked != MotionEvent.ACTION_UP) return@setOnTouchListener true
             if (big) {

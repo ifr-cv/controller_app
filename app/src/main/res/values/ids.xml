@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 控制面板按钮额外数据 -->
+    <item name="btn_extra_data" type="id" />
+    <!-- 控制面板按钮设置值回调函数 -->
+    <item name="btn_setter" type="id" />
+</resources>

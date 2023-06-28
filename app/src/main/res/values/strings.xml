@@ -23,4 +23,12 @@
     <string name="enable_vibrate_seek">拨杆震动</string>
     <string name="self_team_red">己方队伍: 红方</string>
     <string name="self_team_blue">己方队伍: 蓝方</string>
+    <string name="ctrl_btn_stop">Stop</string>
+    <string name="ctrl_btn_ctrl">Ctrl</string>
+    <string name="ctrl_btn_auto">Auto</string>
+    <string name="ctrl_btn_zhuaqu">抓取</string>
+    <string name="ctrl_btn_touzhi">投掷</string>
+    <string name="ctrl_btn_zhuaqu_zhua">抓!</string>
+    <string name="ctrl_btn_zhuaqu_sheng">升!</string>
+    <string name="ctrl_btn_touzhi_tou">投!</string>
 </resources>

@@ -189,4 +189,6 @@ if __name__ == "__main__":
     with open(os.path.join(dir, 'icon.fg.svg'), 'w') as f:
         f.write(summon((500, 500), get_path()))
     with open(os.path.join(dir, 'icon.bg.svg'), 'w') as f:
-        f.write(summon((500, 500), get_path_bg()))
+        f.write(summon((500, 500), [get_path_bg()]))
+    with open(os.path.join(dir, 'icon.svg'), 'w') as f:
+        f.write(summon((500, 500), [get_path_bg()]+get_path()))

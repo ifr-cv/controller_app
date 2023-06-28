@@ -67,7 +67,7 @@ public class DataPack {
     public void setCH(int id, float x, float y) {
         synchronized (bytes) {
             fieldInfos[id].set((int) (x * 660 + 1024));
-            fieldInfos[id + 1].set((int) (y * 660 + 1024));
+            fieldInfos[id + 1].set((int) ((-y) * 660 + 1024));
         }
     }
 

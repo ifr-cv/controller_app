@@ -55,7 +55,7 @@ class ControllerFragment : Fragment() {
 
         addBtnGroup(0, binding.btn1, binding.btn2, binding.btn3)
         addBtnGroup(1, binding.btn4, binding.btn5)
-        addBtn(2, binding.btn6, 500)
+        addBtn(2, binding.btn6, -1)
         addBtn(3, binding.btn7, 500)
 //        addBtn(0, binding.btn1)
 //        addBtn(1, binding.btn2)

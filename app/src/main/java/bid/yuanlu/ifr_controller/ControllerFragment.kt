@@ -47,8 +47,8 @@ class ControllerFragment : Fragment() {
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
         controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
-        addJoystick(5, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
-        addJoystick(7, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
+        addJoystick(5, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
+        addJoystick(8, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
 
 //        addSeek(4, binding.seek1)
 //        addSeek(5, binding.seek2)

@@ -153,11 +153,12 @@ class ControllerFragment : Fragment() {
         var panDownX = 0f//大盘按下时中心位置
         var panDownY = 0f//大盘按下时中心位置
 
-        val setCore = fun(r: Float, x: Float, y: Float) {
+        fun setCore(r: Float, x: Float, y: Float) {
             var dx = x - panDownX
             var dy = y - panDownY
-            if (dx.pow(2) + dy.pow(2) > r.pow(2)) {
-                val s = r / sqrt(dx.pow(2) + dy.pow(2))
+            val disS = dx.pow(2) + dy.pow(2)
+            if (disS > r.pow(2)) {
+                val s = r / sqrt(disS)
                 dx *= s
                 dy *= s
             }
@@ -166,7 +167,7 @@ class ControllerFragment : Fragment() {
             (activity as MainActivity).webManager!!.dataPack.setCH(type, dx / r, dy / r)
         }
         container.setOnTouchListener { _, event ->
-            val r = joystick.width - core.width / 2f
+            val r = joystick.width / 2.0f
             // 获取触摸事件的坐标
             val x = event.x + container.x
             val y = event.y + container.y
@@ -178,12 +179,12 @@ class ControllerFragment : Fragment() {
                     coreOriginalX = core.x
                     coreOriginalY = core.y
 
-                    panDownX = if (x - joystick.width / 2 < container.x) container.x
-                    else if (x + joystick.width / 2 > container.x + container.width) container.x + container.width - joystick.width
+                    panDownX = if (x - (joystick.width / 2.0f + core.width / 2.0f) < container.x) container.x + core.width / 2.0f
+                    else if (x + joystick.width / 2.0f + core.width / 2.0f > container.x + container.width) container.x + container.width - joystick.width - core.width / 2.0f
                     else x - joystick.width / 2
 
-                    panDownY = if (y - joystick.height / 2 < container.y) container.y
-                    else if (y + joystick.height / 2 > container.y + container.height) container.y + container.height - joystick.height
+                    panDownY = if (y - (joystick.height / 2.0f + core.height / 2.0f) / 2 < container.y) container.y + core.height / 2.0f
+                    else if (y + joystick.height / 2.0f + core.height / 2.0f > container.y + container.height) container.y + container.height - joystick.height - core.height / 2.0f
                     else y - joystick.height / 2
 
                     joystick.x = panDownX

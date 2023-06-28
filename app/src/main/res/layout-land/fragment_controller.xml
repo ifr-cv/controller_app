@@ -253,11 +253,11 @@
         android:contentDescription="@string/controllerbtn"
         android:src="@drawable/joystick_background"
         app:layout_constraintBottom_toBottomOf="@id/left_container"
-        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintLeft_toLeftOf="@id/left_container"
         app:layout_constraintRight_toRightOf="@id/left_container"
         app:layout_constraintTop_toTopOf="@id/left_container"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.6" />
 
     <ImageView
         android:id="@+id/joystick_core_1"
@@ -266,9 +266,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/controllerbtn"
         android:scaleType="centerInside"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:src="@drawable/joystick_background"
+        android:src="@drawable/joystick_foreground"
         app:layout_constraintBottom_toBottomOf="@id/joystick_pan_1"
         app:layout_constraintLeft_toLeftOf="@id/joystick_pan_1"
         app:layout_constraintRight_toRightOf="@id/joystick_pan_1"
@@ -282,11 +280,11 @@
         android:contentDescription="@string/controllerbtn"
         android:src="@drawable/joystick_background"
         app:layout_constraintBottom_toBottomOf="@id/right_container"
-        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintHorizontal_bias="0.7"
         app:layout_constraintLeft_toLeftOf="@id/right_container"
         app:layout_constraintRight_toRightOf="@id/right_container"
         app:layout_constraintTop_toTopOf="@id/right_container"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.6" />
 
     <ImageView
         android:id="@+id/joystick_core_2"
@@ -295,9 +293,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/controllerbtn"
         android:scaleType="centerInside"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:src="@drawable/joystick_background"
+        android:src="@drawable/joystick_foreground"
         app:layout_constraintBottom_toBottomOf="@id/joystick_pan_2"
         app:layout_constraintLeft_toLeftOf="@id/joystick_pan_2"
         app:layout_constraintRight_toRightOf="@id/joystick_pan_2"

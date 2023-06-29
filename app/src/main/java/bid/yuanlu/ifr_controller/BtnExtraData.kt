@@ -1,59 +1,38 @@
 package bid.yuanlu.ifr_controller
 
+
 class BtnExtraData(
-    bounce: Long = -1,
-    bounceTo: Int = 0,
-    enable_color: Int = R.color.black,
-    disable_color: Int = R.color.white,
-    enable_bg: Int = R.drawable.green_btn,
-    disable_bg: Int = R.drawable.gray_btn,
-    update: (isPressed: Boolean, lastIsPressed: Boolean) -> Unit = { _, _ -> }
-) {
     /**
      * 自动弹起时长(ms), 小于等于0则不自动弹起
      */
-    var bounce: Long
-
+    var bounce: Long = -1,
     /**
      * 按钮组自动弹起后切换目标
      */
-    var bounceTo: Int
-
+    var bounceTo: Int = 0,
     /**
      * 启动的颜色
      */
-    var enableColor: Int
-
+    var enableColor: Int = R.color.black,
     /**
      * 关闭的颜色
      */
-    var disableColor: Int
+    var disableColor: Int = R.color.white,
 
     /**
      * 启动的背景
      */
-    var enableBg: Int
-
+    var enableBg: Int = R.drawable.green_btn,
     /**
      * 关闭的背景
      */
-    var disableBg: Int
+    var disableBg: Int = R.drawable.gray_btn,
 
     /**
      * 更新函数
      */
-    var update: (isPressed: Boolean, lastIsPressed: Boolean) -> Unit
-
-    init {
-        this.bounce = bounce
-        this.bounceTo = bounceTo
-        this.enableColor = enable_color
-        this.disableColor = disable_color
-        this.update = update
-        this.enableBg = enable_bg
-        this.disableBg = disable_bg
-    }
-}
+    var update: (isPressed: Boolean, lastIsPressed: Boolean) -> Unit = { _, _ -> }
+)
 
 interface SetterBtn {
     fun set(isPressed: Boolean)

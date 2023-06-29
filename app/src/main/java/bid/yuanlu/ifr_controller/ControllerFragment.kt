@@ -17,6 +17,8 @@ import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentControllerBinding
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -30,6 +32,7 @@ class ControllerFragment : Fragment() {
     private lateinit var storge: SharedPreferences
     private lateinit var controllerStatus: SharedPreferences
     private var handler: Handler = Handler(Looper.getMainLooper())
+    private val timer = Timer()
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -47,9 +50,9 @@ class ControllerFragment : Fragment() {
         controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
 
-        binding.btn1.setTag(R.id.btn_extra_data, BtnExtraData(enable_color = R.color.red))
+        binding.btn1.setTag(R.id.btn_extra_data, BtnExtraData(enableColor = R.color.red))
         binding.btn2.setTag(R.id.btn_extra_data, BtnExtraData())
-        binding.btn3.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500))
+        binding.btn3.setTag(R.id.btn_extra_data, BtnExtraData())
         binding.btn4.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
             if (isPress) {
                 binding.btn6.visibility = View.VISIBLE
@@ -69,8 +72,10 @@ class ControllerFragment : Fragment() {
             }
         }))
         binding.btn6.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
-        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
-        binding.btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disable_bg = R.drawable.red_btn))
+        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1, update = { isPress, _ ->
+            binding.btn7.text = getString(if (isPress) R.string.ctrl_btn_zhuaqu_jiang else R.string.ctrl_btn_zhuaqu_sheng)
+        }))
+        binding.btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disableBg = R.drawable.red_btn))
 
         addJoystick(5, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
         addJoystick(8, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
@@ -98,12 +103,16 @@ class ControllerFragment : Fragment() {
             true
         }
 
-        handler.post {
-            val x = ((binding.btn6.x + binding.btn6.width / 2) + (binding.btn7.x + binding.btn7.width / 2)) / 2
-            val y = ((binding.btn6.y + binding.btn6.height / 2) + (binding.btn7.y + binding.btn7.height / 2)) / 2
-            binding.btn8.x = x - binding.btn8.width / 2
-            binding.btn8.y = y - binding.btn8.height / 2
-        }
+        timer.schedule(object : TimerTask() {
+            override fun run() {
+                _binding?.apply {
+                    val x = ((btn6.x + btn6.width / 2) + (btn7.x + btn7.width / 2)) / 2
+                    val y = ((btn6.y + btn6.height / 2) + (btn7.y + btn7.height / 2)) / 2
+                    btn8.x = x - btn8.width / 2
+                    btn8.y = y - btn8.height / 2
+                }
+            }
+        }, 10, 100)
 
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
             if (error != null) {
@@ -258,8 +267,10 @@ class ControllerFragment : Fragment() {
         fun handlerClick(newState: Boolean, vib: Boolean = false) {
             (activity as MainActivity).webManager!!.dataPack.setBTN(type, newState)
             controllerStatus.edit { putBoolean("btn_$type", bed.bounce < 0 && newState) }
-            btn.setBackgroundResource(if (newState) bed.enableBg else bed.disableBg)
-            btn.setTextColor(resources.getColor(if (newState) bed.enableColor else bed.disableColor, activity?.theme))
+            btn.apply {
+                setBackgroundResource(if (newState) bed.enableBg else bed.disableBg)
+                setTextColor(resources.getColor(if (newState) bed.enableColor else bed.disableColor, activity?.theme))
+            }
             bed.update(newState, isPress)
             isPress = newState
             if (vib) vibrate(10, VibrateType.BTN)

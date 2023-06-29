@@ -25,5 +25,22 @@
         <action
             android:id="@+id/action_SettingFragment_to_ControllerFragment"
             app:destination="@id/ControllerFragment" />
+        <action
+            android:id="@+id/action_SettingFragment_to_HostFragment"
+            app:destination="@id/HostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/HostFragment"
+        android:name="bid.yuanlu.ifr_controller.HostFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_host">
+
+        <argument
+            android:name="toHost"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_HostFragment_to_SettingFragment"
+            app:destination="@id/SettingFragment" />
     </fragment>
 </navigation>

@@ -1,84 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/txtConnectionStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/tip_unconnect"
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/editUrl"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:autofillHints="url"
-        android:hint="@string/inpu_url_hint"
-        android:inputType="textUri" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrate_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="@string/enable_vibrate_btn" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrate_joystick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="@string/enable_vibrate_joystick" />
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/vibrate_seek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="@string/enable_vibrate_seek" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/switch_team"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:backgroundTint="#FF1403"
-        android:text="@string/self_team_red" />
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSave"
+        <TextView
+            android:id="@+id/txtConnectionStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:text="@string/save" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/tip_unconnect"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/editUrl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:autofillHints="url"
+            android:hint="@string/inpu_url_hint"
+            android:inputType="textUri" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHost1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/host_edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHost2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/host_edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHost3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/host_edit" />
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vibrate_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/enable_vibrate_btn" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vibrate_joystick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/enable_vibrate_joystick" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vibrate_seek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/enable_vibrate_seek" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
+            android:id="@+id/switch_team"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:backgroundTint="#FF1403"
+            android:text="@string/self_team_red" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/save" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:text="@string/cancel" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtCopyright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="18dp"
+            android:text="@string/copyright"
+            android:textSize="12sp" />
     </LinearLayout>
+</ScrollView>
 
-    <TextView
-        android:id="@+id/txtCopyright"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingTop="8dp"
-        android:text="@string/copyright"
-        android:textSize="12sp" />
-
-</LinearLayout>

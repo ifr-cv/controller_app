@@ -12,6 +12,9 @@
     <string name="rot_phone">请旋转手机</string>
     <string name="inpu_url_hint">输入URL</string>
     <string name="tip_unconnect">未连接</string>
+    <string name="tip_connect">已连接</string>
+    <string name="title_editHost">编辑预设主机名</string>
+    <string name="tip_editHost">输入 "hostname:port" 或 "ip:port"</string>
     <string name="save_and_reconnect">保存并重新连接</string>
     <string name="save_and_connect">保存并连接</string>
     <string name="save">保存</string>
@@ -30,5 +33,7 @@
     <string name="ctrl_btn_touzhi">投掷</string>
     <string name="ctrl_btn_zhuaqu_zhua">抓!</string>
     <string name="ctrl_btn_zhuaqu_sheng">升!</string>
+    <string name="ctrl_btn_zhuaqu_jiang">降!</string>
     <string name="ctrl_btn_touzhi_tou">投</string>
+    <string name="host_edit">长按编辑</string>
 </resources>

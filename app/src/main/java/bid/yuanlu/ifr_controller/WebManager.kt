@@ -14,6 +14,9 @@ class WebManager() {
     var isConnected = false
         private set
 
+    val error: Throwable?
+        get() = connector.error
+
     fun doStatusCallback() {
         connector.doStatusCallback()
     }

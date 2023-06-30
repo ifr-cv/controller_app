@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ class SettingFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var storge: SharedPreferences
+    private var handler: Handler = Handler(Looper.getMainLooper())
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -107,17 +110,33 @@ class SettingFragment : Fragment() {
                     storge.getString(key, null)?.let {
                         if (!it.contains(":")) return@let
                         val (hostname, port) = it.split(":", limit = 2)
-                        val address = if (rIp.matches(hostname)) hostname
-                        else if (rHost.matches(hostname)) InetAddress.getByName(hostname).hostAddress
-                        else null
-                        if (address != null && port.toIntOrNull() in 0..65535) editUrl.setText("http://$address:$port")
+                        Thread {
+                            try {
+                                val address = if (rIp.matches(hostname)) hostname
+                                else if (rHost.matches(hostname)) InetAddress.getByName(hostname).hostAddress
+                                else null
+                                if (address != null && port.toIntOrNull() in 0..65535) handler.post { editUrl.setText("http://$address:$port") }
+                            } catch (e: java.net.UnknownHostException) {
+                                handler.post {
+                                    btn.setBackgroundColor(resources.getColor(R.color.red, activity?.theme))
+                                    btn.text = e.message ?: btn.text
+                                    e.printStackTrace()
+                                }
+                            } catch (e: Throwable) {
+                                handler.post {
+                                    btn.setBackgroundColor(resources.getColor(R.color.red, activity?.theme))
+                                    btn.text = e.toString()
+                                    e.printStackTrace()
+                                }
+                            }
+                        }.start()
                     }
                 }
                 storge.getString(key, null)?.let { btn.text = it }
             }
 
             txtConnectionStatus.text = getString(if (act.webManager!!.isConnected) R.string.tip_connect else R.string.tip_unconnect)
-
+            if (act.webManager!!.error != null) txtConnectionStatus.text = act.webManager!!.error.toString()
         }
     }
 

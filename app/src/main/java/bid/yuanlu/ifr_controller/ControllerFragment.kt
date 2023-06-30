@@ -343,7 +343,6 @@ class ControllerFragment : Fragment() {
             val x = event.x.toDouble() / map.width
             val y = event.y.toDouble() / map.height
             select = mc.getClosest(x, y)
-            val s = select
             (activity as MainActivity).webManager!!.dataPack.setRAW(type, select)
 
             true

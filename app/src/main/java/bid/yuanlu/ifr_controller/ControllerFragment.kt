@@ -49,58 +49,59 @@ class ControllerFragment : Fragment() {
         storge = (activity as MainActivity).getSharedPreferences("settings", Context.MODE_PRIVATE)
         controllerStatus = (activity as MainActivity).getSharedPreferences("controller_status", Context.MODE_PRIVATE)
 
+        binding.apply {
 
-        binding.btn1.setTag(R.id.btn_extra_data, BtnExtraData(enableColor = R.color.red))
-        binding.btn2.setTag(R.id.btn_extra_data, BtnExtraData())
-        binding.btn3.setTag(R.id.btn_extra_data, BtnExtraData())
-        binding.btn4.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
-            if (isPress) {
-                binding.btn6.visibility = View.VISIBLE
-                binding.btn7.visibility = View.VISIBLE
-                binding.btn8.visibility = View.INVISIBLE
-                (binding.btn6.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
-                (binding.btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+            btn1.setTag(R.id.btn_extra_data, BtnExtraData(enableColor = R.color.red))
+            btn2.setTag(R.id.btn_extra_data, BtnExtraData())
+            btn3.setTag(R.id.btn_extra_data, BtnExtraData())
+            btn4.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
+                if (isPress) {
+                    btn6.visibility = View.VISIBLE
+                    btn7.visibility = View.VISIBLE
+                    btn8.visibility = View.INVISIBLE
+                    (btn6.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+                    (btn7.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+                }
+            }))
+            btn5.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
+                if (isPress) {
+                    btn6.visibility = View.INVISIBLE
+                    btn7.visibility = View.INVISIBLE
+                    btn8.visibility = View.VISIBLE
+                    (btn8.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
+                }
+            }))
+            btn6.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
+            btn7.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1, update = { isPress, _ ->
+                btn7.text = getString(if (isPress) R.string.ctrl_btn_zhuaqu_jiang else R.string.ctrl_btn_zhuaqu_sheng)
+            }))
+            btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disableBg = R.drawable.red_btn))
+
+            addJoystick(5, rightContainer, joystickPan2, joystickCore2)
+            addJoystick(8, leftContainer, joystickPan1, joystickCore1)
+
+            //addSeek(4, seek1)
+            //addSeek(5, seek2)
+
+            addBtnGroup(0, btn1, btn2, btn3)
+            addBtnGroup(1, btn4, btn5)
+            addBtn(2, btn6)
+            addBtn(3, btn7)
+            addBtn(3, btn8)
+            //addBtn(0, btn1)
+            //addBtn(1, btn2)
+            //addBtn(2, btn3)
+            //addBtn(3, btn4)
+            //addBtn(4, btn5)
+
+            addMap(4, map, realMap)
+
+            settingBtn.setOnTouchListener { _, event ->
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    findNavController().navigate(R.id.action_ControllerFragment_to_SettingFragment)
+                }
+                true
             }
-        }))
-        binding.btn5.setTag(R.id.btn_extra_data, BtnExtraData(update = { isPress, _ ->
-            if (isPress) {
-                binding.btn6.visibility = View.INVISIBLE
-                binding.btn7.visibility = View.INVISIBLE
-                binding.btn8.visibility = View.VISIBLE
-                (binding.btn8.getTag(R.id.btn_setter) as? SetterBtn)?.set(false)
-
-            }
-        }))
-        binding.btn6.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1))
-        binding.btn7.setTag(R.id.btn_extra_data, BtnExtraData(bounce = -1, update = { isPress, _ ->
-            binding.btn7.text = getString(if (isPress) R.string.ctrl_btn_zhuaqu_jiang else R.string.ctrl_btn_zhuaqu_sheng)
-        }))
-        binding.btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disableBg = R.drawable.red_btn))
-
-        addJoystick(5, binding.rightContainer, binding.joystickPan2, binding.joystickCore2)
-        addJoystick(8, binding.leftContainer, binding.joystickPan1, binding.joystickCore1)
-
-//        addSeek(4, binding.seek1)
-//        addSeek(5, binding.seek2)
-
-        addBtnGroup(0, binding.btn1, binding.btn2, binding.btn3)
-        addBtnGroup(1, binding.btn4, binding.btn5)
-        addBtn(2, binding.btn6)
-        addBtn(3, binding.btn7)
-        addBtn(3, binding.btn8)
-//        addBtn(0, binding.btn1)
-//        addBtn(1, binding.btn2)
-//        addBtn(2, binding.btn3)
-//        addBtn(3, binding.btn4)
-//        addBtn(4, binding.btn5)
-
-        addMap(4, binding.map, binding.realMap)
-
-        binding.settingBtn.setOnTouchListener { _, event ->
-            if (event.actionMasked == MotionEvent.ACTION_UP) {
-                findNavController().navigate(R.id.action_ControllerFragment_to_SettingFragment)
-            }
-            true
         }
 
         timer.schedule(object : TimerTask() {
@@ -115,12 +116,14 @@ class ControllerFragment : Fragment() {
         }, 10, 100)
 
         (activity as MainActivity).webManager!!.setStatusCallback { connected, error ->
-            if (error != null) {
-                binding.settingBtn.setImageResource(R.drawable.gray_light)
-            } else if (connected) {
-                binding.settingBtn.setImageResource(R.drawable.green_light)
-            } else {
-                binding.settingBtn.setImageResource(R.drawable.red_light)
+            binding.settingBtn.apply {
+                if (error != null) {
+                    setImageResource(R.drawable.gray_light)
+                } else if (connected) {
+                    setImageResource(R.drawable.green_light)
+                } else {
+                    setImageResource(R.drawable.red_light)
+                }
             }
         }
         (activity as MainActivity).webManager!!.doStatusCallback()

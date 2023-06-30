@@ -94,7 +94,7 @@ class ControllerFragment : Fragment() {
 //        addBtn(3, binding.btn4)
 //        addBtn(4, binding.btn5)
 
-        addMap(4, binding.map)
+        addMap(4, binding.map, binding.realMap)
 
         binding.settingBtn.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -329,29 +329,19 @@ class ControllerFragment : Fragment() {
      * 添加地图
      */
     @SuppressLint("ClickableViewAccessibility")
-    private fun addMap(type: Int, map: ImageView?) {
-        if (map == null) return
+    private fun addMap(type: Int, map: ImageView?, map_real: ImageView?) {
+        if (map == null || map_real == null) return
         val isRed = storge.getBoolean("is_red_team", true)
-        map.rotation = if (isRed) -90f else 90f
-        var big = false
         val mc = MapClicker.getRobocon2023()
         var select: Int
-        map.setImageResource(R.drawable.robocon_2023_place)
+        map_real.setImageResource(if (isRed) R.drawable.robocon_2023_place_red else R.drawable.robocon_2023_place_blue)
         map.setOnTouchListener { _, event ->
             if (event.actionMasked != MotionEvent.ACTION_UP) return@setOnTouchListener true
-            if (big) {
-                var x = event.x.toDouble() / map.width
-                var y = event.y.toDouble() / map.height
-                if (isRed) {
-                    val t = x;x = y;y = 1 - t
-                } else {
-                    val t = x;x = 1 - y;y = t
-                }
-                select = mc.getClosest(x, y)
-                (activity as MainActivity).webManager!!.dataPack.setRAW(type, select)
-            }
-            big = !big
-            map.setImageResource(if (big) R.drawable.robocon_2023_place_center else R.drawable.robocon_2023_place)
+            val x = event.x.toDouble() / map.width
+            val y = event.y.toDouble() / map.height
+            select = mc.getClosest(x, y)
+            val s = select
+            (activity as MainActivity).webManager!!.dataPack.setRAW(type, select)
 
             true
         }

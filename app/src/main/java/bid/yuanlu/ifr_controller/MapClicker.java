@@ -48,7 +48,7 @@ public class MapClicker {
     @NonNull
     @Contract(value = " -> new", pure = true)
     public static MapClicker getRobocon2023() {
-        return getInstance(2600, 2600, 9400, 9400,//
+        return getInstance(2000, 4500, 10000, 10000,//
                 2800, 9200,//己方左下角
                 6000, 9200,//己方下方
                 9200, 9200,//己方右下角

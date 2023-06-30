@@ -220,6 +220,19 @@
     <!--        app:layout_constraintTop_toTopOf="parent"-->
     <!--        app:layout_constraintVertical_weight="2" />-->
 
+
+    <ImageView
+        android:id="@+id/real_map"
+        android:layout_width="480dp"
+        android:layout_height="300dp"
+        android:contentDescription="@string/controllerbtn"
+        android:src="@drawable/robocon_2023_place_red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <TextView
         android:id="@+id/left_container"
         android:layout_width="0dp"
@@ -228,7 +241,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/map"
+        app:layout_constraintRight_toLeftOf="@id/map_container"
         app:layout_constraintTop_toBottomOf="@id/top_container"
         app:layout_constraintVertical_weight="8" />
 
@@ -239,7 +252,7 @@
         android:alpha="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toRightOf="@id/map"
+        app:layout_constraintLeft_toRightOf="@id/map_container"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_container"
         app:layout_constraintVertical_weight="8" />
@@ -298,18 +311,26 @@
         app:layout_constraintRight_toRightOf="@id/joystick_pan_2"
         app:layout_constraintTop_toTopOf="@id/joystick_pan_2" />
 
-    <ImageView
-        android:id="@+id/map"
-        android:layout_width="300dp"
+
+    <LinearLayout
+        android:id="@+id/map_container"
+        android:layout_width="320dp"
         android:layout_height="300dp"
-        android:contentDescription="@string/controllerbtn"
-        android:rotation="90"
-        android:src="@drawable/robocon_2023_place"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/left_container"
         app:layout_constraintRight_toLeftOf="@id/right_container"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageView
+            android:id="@+id/map"
+            android:layout_width="320dp"
+            android:layout_height="220dp"
+            android:background="#20000000"
+            android:contentDescription="@string/controllerbtn" />
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

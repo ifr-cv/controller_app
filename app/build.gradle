@@ -3,6 +3,28 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+
+static def gitVersionCode() {
+    def cmd = 'git rev-list HEAD --first-parent --count'
+    cmd.execute().text.trim().toInteger()
+}
+
+static def gitVersionTag() {
+    def cmd = 'git describe --tags'
+    def version = cmd.execute().text.trim()
+
+    def pattern = "-(\\d+)-g"
+    def matcher = version =~ pattern
+
+    if (matcher) {
+        version = version.substring(0, matcher.start()) + "." + matcher[0][1]
+    } else {
+        version = version + ".0"
+    }
+
+    return version
+}
+
 android {
     namespace 'bid.yuanlu.ifr_controller'
     compileSdk 33
@@ -11,18 +33,37 @@ android {
         applicationId "bid.yuanlu.ifr_controller"
         minSdk 24
         targetSdk 33
-        versionCode 6
-        versionName "1.5"
+        versionCode 1
+        versionName "0.0.1"
+        resConfigs "zh"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == 'release') {
+            variant.outputs.each { output ->
+                output.versionCodeOverride = gitVersionCode()
+                output.versionNameOverride = gitVersionTag()
+            }
+        } else if (variant.buildType.name == 'debug') {
+            variant.outputs.each { output ->
+                output.versionCodeOverride = gitVersionCode()
+                output.versionNameOverride = gitVersionTag() + ".debug"
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

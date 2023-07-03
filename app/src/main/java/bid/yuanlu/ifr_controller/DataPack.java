@@ -14,7 +14,7 @@ public class DataPack {
     /**
      * 每个数据域的bit数
      */
-    private static final int[] BITS = new int[]{2, 1, 1, 1, 3, 11, 11, 2, 11, 11, 2,};
+    private static final int[] BITS = new int[]{2, 1, 1, 1, 3, 11, 11, 2, 11, 11, 2, 8};
     /**
      * 每个数据域的偏移bit数
      */

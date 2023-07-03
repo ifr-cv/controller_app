@@ -35,5 +35,7 @@
     <string name="ctrl_btn_zhuaqu_sheng">升!</string>
     <string name="ctrl_btn_zhuaqu_jiang">降!</string>
     <string name="ctrl_btn_touzhi_tou">投</string>
+    <string name="ctrl_btn_as_add">加</string>
+    <string name="ctrl_btn_as_sub">减</string>
     <string name="host_edit">长按编辑</string>
 </resources>

@@ -13,10 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import bid.yuanlu.ifr_controller.databinding.FragmentControllerBinding
+import com.google.android.material.button.MaterialButton
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.math.pow
@@ -76,6 +78,8 @@ class ControllerFragment : Fragment() {
                 btn7.text = getString(if (isPress) R.string.ctrl_btn_zhuaqu_jiang else R.string.ctrl_btn_zhuaqu_sheng)
             }))
             btn8.setTag(R.id.btn_extra_data, BtnExtraData(bounce = 500, disableBg = R.drawable.red_btn))
+            as1A.setTag(R.id.btn_extra_data, BtnExtraData())
+            as1S.setTag(R.id.btn_extra_data, BtnExtraData())
 
             addJoystick(5, rightContainer, joystickPan2, joystickCore2)
             addJoystick(8, leftContainer, joystickPan1, joystickCore1)
@@ -95,6 +99,8 @@ class ControllerFragment : Fragment() {
             //addBtn(4, btn5)
 
             addMap(4, map, realMap)
+
+            addAddSub(11, as1S, as1N, as1A)
 
             settingBtn.setOnTouchListener { _, event ->
                 if (event.actionMasked == MotionEvent.ACTION_UP) {
@@ -130,6 +136,7 @@ class ControllerFragment : Fragment() {
         }
         (activity as MainActivity).webManager!!.doStatusCallback()
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -352,4 +359,42 @@ class ControllerFragment : Fragment() {
     }
 
 
+    private fun addAddSub(type: Int, btnSub: MaterialButton?, txtNumber: TextView?, btnAdd: MaterialButton?) {
+        if (btnSub == null || txtNumber == null || btnAdd == null) return
+        val bedSub = btnSub.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData()
+        btnSub.setTag(R.id.btn_extra_data, bedSub)
+        val bedAdd = btnAdd.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData()
+        btnAdd.setTag(R.id.btn_extra_data, bedAdd)
+        val vMin = -128
+        val vMax = 127
+        var num = storge.getInt("add_sub_$type", 0)
+        fun update(delta: Int, vib: Boolean) {
+            num += delta
+            if (num > vMax) num = vMax
+            else if (num < vMin) num = vMin
+
+            txtNumber.text = num.toString()
+            (activity as MainActivity).webManager!!.dataPack.setRAW(type, num)
+            storge.edit { putInt("add_sub_$type", num) }
+            if (vib) vibrate(10, VibrateType.BTN)
+
+            btnAdd.setBackgroundResource(if (num >= vMax) bedAdd.disableBg else bedAdd.enableBg)
+            btnAdd.setTextColor(resources.getColor(if (num >= vMax) bedAdd.disableColor else bedAdd.enableColor, activity?.theme))
+            btnSub.setBackgroundResource(if (num <= vMin) bedSub.disableBg else bedSub.enableBg)
+            btnSub.setTextColor(resources.getColor(if (num <= vMin) bedSub.disableColor else bedSub.enableColor, activity?.theme))
+        }
+        btnSub.setOnClickListener { update(-1, true) }
+        btnSub.setTag(R.id.btn_setter, object : SetterBtn {
+            override fun set(isPressed: Boolean) {
+                update(-1, false)
+            }
+        })
+        btnAdd.setOnClickListener { update(1, true) }
+        btnAdd.setTag(R.id.btn_setter, object : SetterBtn {
+            override fun set(isPressed: Boolean) {
+                update(1, false)
+            }
+        })
+        update(0, false)
+    }
 }

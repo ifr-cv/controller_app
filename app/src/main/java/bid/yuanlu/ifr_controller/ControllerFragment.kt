@@ -109,8 +109,10 @@ class ControllerFragment : Fragment() {
                 _binding?.apply {
                     val x = ((btn6.x + btn6.width / 2) + (btn7.x + btn7.width / 2)) / 2
                     val y = ((btn6.y + btn6.height / 2) + (btn7.y + btn7.height / 2)) / 2
-                    btn8.x = x - btn8.width / 2
-                    btn8.y = y - btn8.height / 2
+                    handler.post {
+                        btn8.x = x - btn8.width / 2
+                        btn8.y = y - btn8.height / 2
+                    }
                 }
             }
         }, 10, 100)

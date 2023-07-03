@@ -40,6 +40,6 @@ class WebManager() {
             override fun run() {
                 connector.send(dataPack)
             }
-        }, 0, 9)
+        }, 0, 10)
     }
 }

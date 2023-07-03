@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+    y="0px" viewBox="0 0 300 300" xml:space="preserve">
+
+    //M300,200 h-150 a150,150 0 1,0 150,-150 z
+    <path d="M0,150 h50 A100,100 0 1,0 150,50 v -50A150,150 0 1,1 0,150 z" fill="#ffffff" stroke="blue"
+        stroke-width="0" />
+</svg>

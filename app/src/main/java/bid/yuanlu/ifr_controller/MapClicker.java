@@ -80,6 +80,10 @@ public class MapClicker {
         return min;
     }
 
+    public Point getPoint(int i) {
+        return points[i];
+    }
+
     public static final class Point {
         public final double x, y;
 

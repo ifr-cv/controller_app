@@ -99,7 +99,7 @@ class ControllerFragment : Fragment() {
             //addBtn(3, btn4)
             //addBtn(4, btn5)
 
-            addMap(4, map, realMap)
+            addMap(4, map, realMap, poleSelected)
 
             addAddSub(11, as1S, as1N, as1A)
 
@@ -342,21 +342,39 @@ class ControllerFragment : Fragment() {
      * 添加地图
      */
     @SuppressLint("ClickableViewAccessibility")
-    private fun addMap(type: Int, map: ImageView?, map_real: ImageView?) {
-        if (map == null || map_real == null) return
+    private fun addMap(type: Int, map: ImageView?, map_real: ImageView?, map_selected: ImageView?) {
+        if (map == null || map_real == null || map_selected == null) return
         val isRed = storge.getBoolean("is_red_team", true)
         val mc = MapClicker.getRobocon2023()
-        var select: Int
         map_real.setImageResource(if (isRed) R.drawable.robocon_2023_place_red else R.drawable.robocon_2023_place_blue)
+        fun update(id: Int) {
+            (activity as MainActivity).webManager!!.dataPack.setRAW(type, id)
+
+            val p = mc.getPoint(id);
+            map_selected.x = (p.x * map.width - map_selected.width / 2.0).toFloat()
+            map_selected.y = (p.y * map.height - map_selected.height / 2.0).toFloat()
+            map_selected.visibility = View.VISIBLE
+        }
         map.setOnTouchListener { _, event ->
             if (event.actionMasked != MotionEvent.ACTION_UP) return@setOnTouchListener true
             val x = event.x.toDouble() / map.width
             val y = event.y.toDouble() / map.height
-            select = mc.getClosest(x, y)
-            (activity as MainActivity).webManager!!.dataPack.setRAW(type, select)
-
+            update(mc.getClosest(x, y))
             true
         }
+
+        timer.schedule(object : TimerTask() {
+            var rot = 0f
+            var needInit = true
+            override fun run() {
+                if (needInit && map.height * map.width * map_selected.width * map_selected.height > 0) {
+                    needInit = false
+                    handler.post { update(0) }
+                }
+                handler.post { map_selected.rotation = rot }
+                rot = (rot + 1) % 360
+            }
+        }, 10, (1000.0 / 360).toLong())
     }
 
 
@@ -411,4 +429,6 @@ class ControllerFragment : Fragment() {
 
         update(0, false)
     }
+
+
 }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -359,6 +360,7 @@ class ControllerFragment : Fragment() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun addAddSub(type: Int, btnSub: MaterialButton?, txtNumber: TextView?, btnAdd: MaterialButton?) {
         if (btnSub == null || txtNumber == null || btnAdd == null) return
         val bedSub = btnSub.getTag(R.id.btn_extra_data) as? BtnExtraData ?: BtnExtraData()
@@ -368,8 +370,8 @@ class ControllerFragment : Fragment() {
         val vMin = -128
         val vMax = 127
         var num = storge.getInt("add_sub_$type", 0)
-        fun update(delta: Int, vib: Boolean) {
-            num += delta
+        fun update(delta: Int, vib: Boolean, abs: Boolean = false) {
+            num = if (abs) delta else num + delta
             if (num > vMax) num = vMax
             else if (num < vMin) num = vMin
 
@@ -395,6 +397,18 @@ class ControllerFragment : Fragment() {
                 update(1, false)
             }
         })
+
+        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                update(0, true, abs = true)
+                return true
+            }
+        })
+        txtNumber.setOnTouchListener { _, event ->
+            gestureDetector.onTouchEvent(event)
+            true
+        }
+
         update(0, false)
     }
 }

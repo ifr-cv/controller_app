@@ -9,7 +9,7 @@ class WebManager() {
 
     private val timer = Timer()
     val dataPack = DataPack()
-    private var connector: Connector = Connector.SocketConnector()
+    private var connector: Connector = Connector.UDPSocketConnector()
 
     var isConnected = false
         private set
